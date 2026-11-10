@@ -9,11 +9,12 @@ A simple demonstration of a generic modulo hash function
 #include <stdlib.h>
 #include <time.h>
 
+int PRIME;
 int NUM_COLLISIONS = 0;
 
 int mod_hash(int key, int table_size){
    if (key < 0) key = -key;
-   return key % table_size;
+   return (key * PRIME) % table_size;
 }
 
 void hash_insert(int* hash_table, int table_size, int key){
@@ -48,15 +49,16 @@ void hash_delete(int* hash_table, int table_size, int key){
 }
 
 int main(int argc, char* argv[]){
-   if (argc != 4){
+   if (argc != 5){
       printf("Error: Illegal arguments\n");
-      printf("Usage: mod-hash <table_size>, <num_keys>, <num_deletes>\n");
+      printf("Usage: mod-hash <table_size>, <num_keys>, <num_deletes>, <prime>\n");
       return 1; 
    }
 
    int table_size = atoi(argv[1]);
    int num_keys = atoi(argv[2]);
    int num_deletes = atoi(argv[3]);
+   PRIME = atoi(argv[4]);
  
    if (table_size <= 0 || num_keys <= 0 || num_deletes < 0){
       printf("Error: Both table size and number of keys must be greater than" 
