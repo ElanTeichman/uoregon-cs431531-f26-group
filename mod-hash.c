@@ -2,6 +2,9 @@
 
 A simple demonstration of a generic modulo hash function
 
+Creates an array of size num_keys , uses rand() to populate the array , 
+uses hash_insert to populate hash table , hash_insert uses mod_hash to 
+define where the key value in the table. 
 
 */
 
@@ -85,6 +88,11 @@ int main(int argc, char* argv[]){
    }
    printf("Allocated %d spaces for keys in key array\n", num_keys);
 
+   for (int i = 0; i < num_keys; i++){
+      printf("Generating key %d for input array\n", i);
+      keys[i] = rand() % 1000;
+   }
+
    // Allocate/initialize empty (-1) hash table
    int* hash_table = malloc(table_size * sizeof(int));
    if (hash_table == NULL){
@@ -101,8 +109,6 @@ int main(int argc, char* argv[]){
 
    // inserting random numbers to hash table using hash_insert
    for (int i = 0; i < num_keys; i++){
-      // generate keys ranging from 0 - 999
-      keys[i] = rand() % 1000;
       printf("Attempting to insert %d into hash table\n", keys[i]);
       hash_insert(hash_table, table_size, keys[i]);
    }
