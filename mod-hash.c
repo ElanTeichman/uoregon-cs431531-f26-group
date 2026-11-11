@@ -9,16 +9,19 @@ A simple demonstration of a generic modulo hash function
 #include <stdlib.h>
 #include <time.h>
 
-int PRIME;
+unsigned int PRIME;
 int NUM_COLLISIONS = 0;
 
-int mod_hash(int key, int table_size){
-   if (key < 0) key = -key;
-   return (key * PRIME) % table_size;
+unsigned int mod_hash(int key, int table_size){
+   unsigned int ukey;
+   
+   if (key < 0) ukey = -(unsigned int)key;
+   else ukey = (unsigned int)key;
+   return (unsigned int)((ukey * PRIME) % (unsigned int)table_size);
 }
 
 void hash_insert(int* hash_table, int table_size, int key){
-   int index = mod_hash(key, table_size);
+   unsigned int index = mod_hash(key, table_size);
 
    // if slot is occupied
    if (hash_table[index] != -1){
@@ -58,7 +61,7 @@ int main(int argc, char* argv[]){
    int table_size = atoi(argv[1]);
    int num_keys = atoi(argv[2]);
    int num_deletes = atoi(argv[3]);
-   PRIME = atoi(argv[4]);
+   PRIME = (unsigned int)atoi(argv[4]);
  
    if (table_size <= 0 || num_keys <= 0 || num_deletes < 0){
       printf("Error: Both table size and number of keys must be greater than" 
@@ -71,8 +74,6 @@ int main(int argc, char* argv[]){
       num_deletes = num_keys;
    }
 
-   printf("Deleting %d keys", num_deletes);
-
    // Use time to create a "random" number generator
    srand((unsigned int)time(NULL));
 
@@ -82,6 +83,7 @@ int main(int argc, char* argv[]){
       printf("Memory allocation error while creating key array\n");
       return 1;
    }
+   printf("Allocated %d spaces for keys in key array\n", num_keys);
 
    // Allocate/initialize empty (-1) hash table
    int* hash_table = malloc(table_size * sizeof(int));
@@ -89,18 +91,22 @@ int main(int argc, char* argv[]){
       printf("Memory allocation error while creating hash table\n");
       return 1;
    }
+   printf("Allocated %d spaces for hash table\n", table_size);
    
    for (int i = 0; i < table_size; i++){
       hash_table[i] = -1;
    }
 
-   printf("Running with table size: %d and %d keys\n\n", table_size, num_keys);
+   printf("Initialized hash table\n\n");
 
    // inserting random numbers to hash table using hash_insert
    for (int i = 0; i < num_keys; i++){
-      keys[i] = rand();
+      // generate keys ranging from 0 - 999
+      keys[i] = rand() % 1000;
+      printf("Attempting to insert %d into hash table\n", keys[i]);
       hash_insert(hash_table, table_size, keys[i]);
    }
+   printf("Inserted %d keys into hash table\n", num_keys);
 
    // delete
    if (num_deletes > 0){
@@ -112,6 +118,7 @@ int main(int argc, char* argv[]){
          hash_delete(hash_table, table_size, target_key);
       }
    }
+   
 
    // print final form of hash table
    for (int i = 0; i < table_size; i++){
